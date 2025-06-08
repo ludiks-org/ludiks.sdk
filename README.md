@@ -1,61 +1,52 @@
 # Ludiks SDK
 
-Le SDK JavaScript officiel de [Ludiks](https://ludiks.io) — une solution simple pour intégrer de la gamification dans votre produit sans complexité technique.
+The official JavaScript SDK for [Ludiks](https://ludiks.io) — a simple solution to integrate gamification into your product without technical complexity.
 
 ## 🚀 Installation
 
 ```bash
 npm install ludiks-sdk
-# ou
+# or
 yarn add ludiks-sdk
 ````
 
-## 🔧 Utilisation
+## 🔧 Usage
 
 ```ts
 import { Ludiks } from 'ludiks-sdk';
 
-// Initialisation
-const sdk = Ludiks.create({
+// Init
+const sdk = Ludiks.setup({
   apiKey: 'your-api-key',
   user: {
     id: 'user-123',
     full_name: 'Jane Doe',
-    email: 'jane@example.com',
+    email: 'jane@example.com', // optional
+    picture: 'https://avatar-url.com', // optional
     metadata: { plan: 'pro' }
   }
 });
 
-// Tracking d'un événement
+// Track an event
 sdk.trackEvent({
   eventName: 'onboarding_completed',
   value: 1
 });
 ```
 
-## 📦 Méthodes
+## 📦 Methods
 
-### `Ludiks.create(options: InitOptions): Ludiks`
+### `Ludiks.setup(options: SetupOptions): Ludiks`
 
-Crée une instance SDK avec les informations de l'utilisateur et le `apiKey` de votre projet.
+Creates an SDK instance with user information and your project `apiKey`.
 
 ### `sdk.trackEvent(options: TrackEventOptions): Promise<void>`
 
-Envoie un événement de progression (nom, valeur, timestamp).
-
-## 💡 Cas d’usage
-
-* Suivre la progression de vos utilisateurs dans des parcours (onboarding, activation…)
-* Alimenter des parcours gamifiés sans modifier l'architecture produit
-* Construire une stratégie de rétention avec des analytics exploitables
-
-## ⚙️ Paramètres facultatifs
-
-Vous pouvez surcharger l’`apiUrl` pour l’environnement de développement :
+Sends a progression event (name, value, timestamp).
 
 ```ts
 Ludiks.create({
-  apiKey: 'clé',
+  apiKey: 'key',
   baseUrl: 'http://localhost:3001',
   user: {
     id: 'abc',
@@ -64,4 +55,4 @@ Ludiks.create({
 })
 ```
 
-🧪 Compatible avec les environnements modernes (Next.js, React, Vue, etc.)
+🧪 Compatible with modern environments (Next.js, React, Vue, etc.)
