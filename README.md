@@ -1,8 +1,3 @@
-Bien sûr ! Voici le contenu **copiable** du `README.md` pour ton SDK :
-
----
-
-````markdown
 # Ludiks SDK
 
 Le SDK JavaScript officiel de [Ludiks](https://ludiks.io) — une solution simple pour intégrer de la gamification dans votre produit sans complexité technique.
@@ -69,15 +64,4 @@ Ludiks.create({
 })
 ```
 
-## 📬 Besoin d’aide ?
-
-Contactez-nous sur [LinkedIn](https://www.linkedin.com/in/votre-profil) ou via [contact@ludiks.io](mailto:contact@ludiks.io).
-
----
-
 🧪 Compatible avec les environnements modernes (Next.js, React, Vue, etc.)
-
-```
-
-Souhaite-tu aussi un exemple complet de projet de test pour publier avec ce SDK ou une doc technique plus poussée (e.g. batch, streaks, etc.) ?
-```
