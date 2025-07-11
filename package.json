@@ -1,17 +1,35 @@
 {
-  "name": "ludiks-sdk",
-  "version": "0.1.0",
+  "name": "@ludiks/sdk",
+  "version": "0.1.3",
+  "description": "The official JavaScript SDK for Ludiks — a simple solution to integrate gamification into your product without technical complexity.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "author": "Olivier Maréchal",
   "keywords": ["sdk", "gamification", "analytics", "ludiks"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/ludiks.git",
+    "directory": "ludiks.sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/ludiks/issues"
+  },
+  "homepage": "https://github.com/your-username/ludiks#readme",
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
