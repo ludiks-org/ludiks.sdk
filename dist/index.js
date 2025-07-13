@@ -23,7 +23,7 @@ class Ludiks {
                 },
                 body: JSON.stringify({
                     id: options.user.id,
-                    full_name: options.user.full_name,
+                    fullName: options.user.fullName,
                     email: options.user.email,
                     picture: options.user.picture,
                     metadata: options.user.metadata,
@@ -46,8 +46,8 @@ class Ludiks {
                         'Authorization': `Bearer ${options.apiKey}`,
                     },
                     body: JSON.stringify({
-                        user_id: options.userId,
-                        event_name: options.eventName,
+                        userId: options.userId,
+                        eventName: options.eventName,
                         value: options.value,
                         timestamp: options.timestamp,
                     }),
@@ -61,6 +61,23 @@ class Ludiks {
                 console.error('Ludiks trackEvent error:', err);
                 throw err;
             }
+        });
+    }
+    static getProfile(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const baseUrl = (_a = options.baseUrl) !== null && _a !== void 0 ? _a : this.defaultBaseUrl;
+            const res = yield fetch(`${baseUrl}/api/end-user/${options.userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${options.apiKey}`,
+                },
+            });
+            if (!res.ok) {
+                throw new Error(`Failed to get profile: ${res.status}`);
+            }
+            return yield res.json();
         });
     }
 }

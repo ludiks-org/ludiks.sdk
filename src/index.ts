@@ -1,14 +1,66 @@
 export interface User {
   id: string;
-  full_name: string;
+  fullName: string;
   email?: string;
   picture?: string;
   metadata?: Record<string, any>;
 }
 
+export type StepProgression = {
+  id: string;
+  name: string;
+  points: number;
+  status: string;
+  completedAt: string | null;
+  completionThreshold: number;
+}
+
+export type CircuitProgression = {
+  id: string;
+  name: string;
+  type: string;
+  points: number;
+  status: 'not_started' | 'in_progress' | 'completed';
+  startDate: string | null;
+  completedAt: string | null;
+  stepProgressions: Array<StepProgression>;
+}
+
+export type UserReward = {
+  id: string;
+  name: string;
+  description: string;
+  obtainedAt: string;
+  stepId?: string;
+  stepName?: string;
+  circuitId: string;
+  circuitName: string;
+  unlockOnCircuitCompletion?: boolean;
+}
+
+export type LudiksProfile = {
+  id: string;
+  fullName: string;
+  email?: string;
+  picture?: string;
+  metadata: Record<string, any>;
+  progressions: Array<CircuitProgression>;
+  rewards: Array<UserReward>;
+  currentStreak: number;
+  longestStreak: number;
+  createdAt: string;
+  lastLogin: string;
+}
+
 export interface InitUserOptions {
   apiKey: string;
   user: User;
+  baseUrl?: string;
+}
+
+export interface GetProfileOptions {
+  apiKey: string;
+  userId: string;
   baseUrl?: string;
 }
 
@@ -48,7 +100,7 @@ export class Ludiks {
       },
       body: JSON.stringify({
         id: options.user.id,
-        full_name: options.user.full_name,
+        fullName: options.user.fullName,
         email: options.user.email,
         picture: options.user.picture,
         metadata: options.user.metadata,
@@ -71,8 +123,8 @@ export class Ludiks {
           'Authorization': `Bearer ${options.apiKey}`,
         },
         body: JSON.stringify({
-          user_id: options.userId,
-          event_name: options.eventName,
+          userId: options.userId,
+          eventName: options.eventName,
           value: options.value,
           timestamp: options.timestamp,
         }),
@@ -87,5 +139,23 @@ export class Ludiks {
       console.error('Ludiks trackEvent error:', err);
       throw err;
     }
+  }
+
+  static async getProfile(options: GetProfileOptions): Promise<LudiksProfile> {
+    const baseUrl = options.baseUrl ?? this.defaultBaseUrl;
+
+    const res = await fetch(`${baseUrl}/api/end-user/${options.userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${options.apiKey}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to get profile: ${res.status}`);
+    }
+
+    return await res.json();
   }
 }
