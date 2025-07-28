@@ -54,7 +54,7 @@ if (response.success) {
 
 ### `Ludiks.initUser(options: InitUserOptions): Promise<void>`
 
-Creates or updates a user in your Ludiks project.
+Creates or updates a user in your Ludiks project. This method also calculates the user's login streak, so it should be called whenever the user logs in to your application.
 
 ```ts
 await Ludiks.initUser({
