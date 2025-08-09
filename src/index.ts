@@ -88,22 +88,64 @@ export interface TrackEventResponse {
 
 export class Ludiks {
   private static defaultBaseUrl = 'https://api.ludiks.io';
+  private static globalApiKey: string | null = null;
+  private static globalBaseUrl: string | null = null;
 
-  static async initUser(options: InitUserOptions): Promise<void> {
-    const baseUrl = options.baseUrl ?? this.defaultBaseUrl;
+  /**
+   * Configure global API key and base URL for all SDK calls
+   * @param apiKey Your Ludiks API key
+   * @param baseUrl Optional custom base URL (defaults to https://api.ludiks.io)
+   */
+  static configure(apiKey: string, baseUrl?: string): void {
+    this.globalApiKey = apiKey;
+    this.globalBaseUrl = baseUrl || this.defaultBaseUrl;
+  }
+
+  /**
+   * Get the current global configuration
+   */
+  private static getConfig(): { apiKey: string; baseUrl: string } {
+    if (!this.globalApiKey) {
+      throw new Error('Ludiks SDK not configured. Please call Ludiks.configure() first.');
+    }
+    return {
+      apiKey: this.globalApiKey,
+      baseUrl: this.globalBaseUrl || this.defaultBaseUrl,
+    };
+  }
+
+  static async initUser(options: InitUserOptions): Promise<void>;
+  static async initUser(user: User): Promise<void>;
+  static async initUser(optionsOrUser: InitUserOptions | User): Promise<void> {
+    let apiKey: string;
+    let baseUrl: string;
+    let user: User;
+
+    if ('apiKey' in optionsOrUser) {
+      // Legacy format with all options
+      apiKey = optionsOrUser.apiKey;
+      baseUrl = optionsOrUser.baseUrl ?? this.defaultBaseUrl;
+      user = optionsOrUser.user;
+    } else {
+      // New format using global config
+      const config = this.getConfig();
+      apiKey = config.apiKey;
+      baseUrl = config.baseUrl;
+      user = optionsOrUser;
+    }
 
     const res = await fetch(`${baseUrl}/api/end-user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${options.apiKey}`,
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        id: options.user.id,
-        fullName: options.user.fullName,
-        email: options.user.email,
-        picture: options.user.picture,
-        metadata: options.user.metadata,
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        picture: user.picture,
+        metadata: user.metadata,
       }),
     });
 
@@ -112,21 +154,52 @@ export class Ludiks {
     }
   }
 
-  static async trackEvent(options: TrackEventOptions): Promise<TrackEventResponse> {
-    const baseUrl = options.baseUrl ?? this.defaultBaseUrl;
+  static async trackEvent(options: TrackEventOptions): Promise<TrackEventResponse>;
+  static async trackEvent(userId: string, eventName: string, value?: number, timestamp?: Date): Promise<TrackEventResponse>;
+  static async trackEvent(
+    optionsOrUserId: TrackEventOptions | string,
+    eventName?: string,
+    value?: number,
+    timestamp?: Date
+  ): Promise<TrackEventResponse> {
+    let apiKey: string;
+    let baseUrl: string;
+    let userId: string;
+    let finalEventName: string;
+    let finalValue: number | undefined;
+    let finalTimestamp: Date | undefined;
+
+    if (typeof optionsOrUserId === 'string') {
+      // New format using global config
+      const config = this.getConfig();
+      apiKey = config.apiKey;
+      baseUrl = config.baseUrl;
+      userId = optionsOrUserId;
+      finalEventName = eventName!;
+      finalValue = value;
+      finalTimestamp = timestamp;
+    } else {
+      // Legacy format with all options
+      apiKey = optionsOrUserId.apiKey;
+      baseUrl = optionsOrUserId.baseUrl ?? this.defaultBaseUrl;
+      userId = optionsOrUserId.userId;
+      finalEventName = optionsOrUserId.eventName;
+      finalValue = optionsOrUserId.value;
+      finalTimestamp = optionsOrUserId.timestamp;
+    }
 
     try {
       const res = await fetch(`${baseUrl}/api/tracking`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${options.apiKey}`,
+          'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          userId: options.userId,
-          eventName: options.eventName,
-          value: options.value,
-          timestamp: options.timestamp,
+          userId,
+          eventName: finalEventName,
+          value: finalValue,
+          timestamp: finalTimestamp,
         }),
       });
 
@@ -141,14 +214,31 @@ export class Ludiks {
     }
   }
 
-  static async getProfile(options: GetProfileOptions): Promise<LudiksProfile> {
-    const baseUrl = options.baseUrl ?? this.defaultBaseUrl;
+  static async getProfile(options: GetProfileOptions): Promise<LudiksProfile>;
+  static async getProfile(userId: string): Promise<LudiksProfile>;
+  static async getProfile(optionsOrUserId: GetProfileOptions | string): Promise<LudiksProfile> {
+    let apiKey: string;
+    let baseUrl: string;
+    let userId: string;
 
-    const res = await fetch(`${baseUrl}/api/end-user/${options.userId}`, {
+    if (typeof optionsOrUserId === 'string') {
+      // New format using global config
+      const config = this.getConfig();
+      apiKey = config.apiKey;
+      baseUrl = config.baseUrl;
+      userId = optionsOrUserId;
+    } else {
+      // Legacy format with all options
+      apiKey = optionsOrUserId.apiKey;
+      baseUrl = optionsOrUserId.baseUrl ?? this.defaultBaseUrl;
+      userId = optionsOrUserId.userId;
+    }
+
+    const res = await fetch(`${baseUrl}/api/end-user/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${options.apiKey}`,
+        'Authorization': `Bearer ${apiKey}`,
       },
     });
 

@@ -79,7 +79,22 @@ export interface TrackEventResponse {
 }
 export declare class Ludiks {
     private static defaultBaseUrl;
+    private static globalApiKey;
+    private static globalBaseUrl;
+    /**
+     * Configure global API key and base URL for all SDK calls
+     * @param apiKey Your Ludiks API key
+     * @param baseUrl Optional custom base URL (defaults to https://api.ludiks.io)
+     */
+    static configure(apiKey: string, baseUrl?: string): void;
+    /**
+     * Get the current global configuration
+     */
+    private static getConfig;
     static initUser(options: InitUserOptions): Promise<void>;
+    static initUser(user: User): Promise<void>;
     static trackEvent(options: TrackEventOptions): Promise<TrackEventResponse>;
+    static trackEvent(userId: string, eventName: string, value?: number, timestamp?: Date): Promise<TrackEventResponse>;
     static getProfile(options: GetProfileOptions): Promise<LudiksProfile>;
+    static getProfile(userId: string): Promise<LudiksProfile>;
 }

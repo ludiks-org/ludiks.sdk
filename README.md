@@ -1,53 +1,67 @@
-# Ludiks SDK
+# @ludiks/sdk
 
-The official JavaScript SDK for [Ludiks](https://ludiks.io) — a simple solution to integrate gamification into your product without technical complexity.
+The official JavaScript/TypeScript SDK for Ludiks — a simple solution to integrate gamification into your product without technical complexity.
 
-## 🚀 Installation
+## Installation
 
 ```bash
 npm install @ludiks/sdk
 # or
 yarn add @ludiks/sdk
+# or
+pnpm add @ludiks/sdk
 ```
 
-## 🔧 Usage
+## Quick Start
 
-```ts
-import { Ludiks, TrackEventResponse, Profile } from '@ludiks/sdk';
+### Configuration (Recommended)
 
-// Initialize or update a user
+Configure once and use everywhere:
+
+```typescript
+import { Ludiks } from '@ludiks/sdk';
+
+// Configure once at app initialization
+Ludiks.configure('your-api-key');
+
+// Now use simplified methods without repeating API key
+await Ludiks.initUser({
+  id: 'user-123',
+  fullName: 'John Doe',
+  email: 'john@example.com'
+});
+
+await Ludiks.trackEvent('user-123', 'login');
+
+const profile = await Ludiks.getProfile('user-123');
+```
+
+### Legacy Usage (Still Supported)
+
+If you prefer to pass options every time:
+
+```typescript
+import { Ludiks } from '@ludiks/sdk';
+
 await Ludiks.initUser({
   apiKey: 'your-api-key',
   user: {
     id: 'user-123',
-    fullName: 'Jane Doe',
-    email: 'jane@example.com', // optional
-    picture: 'https://avatar-url.com', // optional
-    metadata: { plan: 'pro' } // optional
+    fullName: 'John Doe',
+    email: 'john@example.com'
   }
 });
 
-// Track an event
-const response: TrackEventResponse = await Ludiks.trackEvent({
+await Ludiks.trackEvent({
   apiKey: 'your-api-key',
   userId: 'user-123',
-  eventName: 'onboarding_completed',
-  value: 1
+  eventName: 'login'
 });
 
-// Get user profile with all progressions
-const profile: Profile = await Ludiks.getProfile({
+const profile = await Ludiks.getProfile({
   apiKey: 'your-api-key',
   userId: 'user-123'
 });
-
-// Check the response
-if (response.success) {
-  console.log('Points earned:', response.points);
-  console.log('Step completed:', response.stepCompleted);
-  console.log('Circuit completed:', response.circuitCompleted);
-  console.log('Rewards:', response.rewards);
-}
 ```
 
 ## 📦 Methods

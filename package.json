@@ -1,6 +1,6 @@
 {
   "name": "@ludiks/sdk",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "The official JavaScript SDK for Ludiks — a simple solution to integrate gamification into your product without technical complexity.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
